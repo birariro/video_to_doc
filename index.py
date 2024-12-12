@@ -30,12 +30,16 @@ if st.button("문서 생성하기"):
             transcription = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
             fullTranscript = "".join([content['text'] for content in transcription])
 
+            if len(fullTranscript) > 9000:
+                st.error("너무 긴 영상은 불가")
+                st.stop()  # 중단
             # Prepare prompt for OpenAI
             prompt = f"""
             아래의 내용은 전문 소프트웨어 엔지니어가 자신의 기술적 지식을 나누는 대화의 녹음본입니다.  
             이 내용을 기반으로 기술 문서를 작성해 주세요.
 
             작성 시 반드시 다음 지침을 준수하세요:  
+            - 이것이 녹음본이라고 이야기 하지 마세요
             - 문서 작성 언어: 한국어로 작성합니다.  
             - 문서의 형식: Markdown 형태로 작성합니다.  
                 - 제목, 부제목, 목록, 코드 블록 등을 적절히 사용하여 문서를 구조화하세요.  
@@ -72,7 +76,7 @@ if st.button("문서 생성하기"):
             ]
 
             response = client.chat.completions.create(
-                model="llama-3.1-sonar-small-128k-online",
+                model="llama-3.1-sonar-large-128k-online",
                 messages=messages,
             )
 
