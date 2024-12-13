@@ -8,14 +8,11 @@ from prompt import get_prompt
 
 # Streamlit App
 st.title("YouTube Video to Technical Documentation")
-st.write("`YouTube URL`를 입력하세요.")
+st.write("`YouTube URL`를 입력하세요.(예: https://www.youtube.com/watch?v=xxxx)")
 
-# Input Fields
 videoUrl = st.text_input("YouTube URL")
 
-# Button to trigger the process
-if st.button("문서 생성하기"):
-
+if st.button("생성하기"):
     with st.spinner("문서를 생성 중입니다..."):
         # Extract video ID from URL
         match = re.search(r"v=([^&]+)", videoUrl)
@@ -32,7 +29,7 @@ if st.button("문서 생성하기"):
             transcription = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
             fullTranscript = "".join([content['text'] for content in transcription])
 
-            if len(fullTranscript) > 9000:
+            if len(fullTranscript) > 40000:
                 st.error("너무 긴 영상은 불가")
                 st.stop()  # 중단
 
@@ -57,7 +54,14 @@ if st.button("문서 생성하기"):
             )
 
             # Display the generated document
-            st.markdown(response.choices[0].message.content)
+            generated_document = response.choices[0].message.content
+            st.markdown(generated_document)
 
+            st.download_button(
+                label="Download Document",
+                data=generated_document,
+                file_name="doc.md",
+                mime="text/markdown"
+            )
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
