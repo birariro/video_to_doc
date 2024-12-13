@@ -1,35 +1,23 @@
 import streamlit as st
-from youtube_transcript_api import YouTubeTranscriptApi
 from openai import OpenAI
-import re
 import os
 
 from prompt import get_prompt
+from parser import get_video_script
 
 # Streamlit App
-st.title("YouTube Video to Technical Documentation")
-st.write("`YouTube URL`를 입력하세요.(예: https://www.youtube.com/watch?v=xxxx)")
+st.title("YouTube Video to Documentation")
+st.write("`YouTube URL`를 입력하세요.")
 
 videoUrl = st.text_input("YouTube URL")
 
 if st.button("생성하기"):
     with st.spinner("문서를 생성 중입니다..."):
-        # Extract video ID from URL
-        match = re.search(r"v=([^&]+)", videoUrl)
-        if match:
-            video_id = match.group(1)
-        else:
-            st.error("유효한 YouTube URL을 입력하세요.")
-            st.stop()  # 중단
-
         try:
-
+            video_script = get_video_script(videoUrl)
             apiKey = os.getenv('OPEN_AI_TOKEN', 'abc')
-            # Fetch transcript from YouTube
-            transcription = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en'])
-            fullTranscript = "".join([content['text'] for content in transcription])
-
-            if len(fullTranscript) > 40000:
+       
+            if len(video_script) > 40000:
                 st.error("너무 긴 영상은 불가")
                 st.stop()  # 중단
 
@@ -39,12 +27,12 @@ if st.button("생성하기"):
                 {
                     "role": "system",
                     "content": (
-                        "You are an artificial intelligence assistant and you need to engage in a helpful, detailed, polite conversation with a user."
+                        get_prompt()
                     ),
                 },
                 {
                     "role": "user",
-                    "content": get_prompt(fullTranscript),
+                    "content": video_script,
                 },
             ]
 
@@ -58,7 +46,7 @@ if st.button("생성하기"):
             st.markdown(generated_document)
 
             st.download_button(
-                label="Download Document",
+                label="다운로드",
                 data=generated_document,
                 file_name="doc.md",
                 mime="text/markdown"
