@@ -1,5 +1,28 @@
-def get_prompt():
-    return """
+package com.example.video2document.adapter.impl;
+
+import com.example.video2document.adapter.DocumentGenerator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+class PerplexityClient implements DocumentGenerator {
+    private final OpenAiChatModel chatModel;
+
+    @Override
+    public String generateDocument(String text) {
+        Prompt prompt = new Prompt(new SystemMessage(getSystemPrompt()), new UserMessage(text));
+        ChatResponse call = this.chatModel.call(prompt);
+        return call.getResult().getOutput().getText();
+    }
+
+    private String getSystemPrompt(){
+        return """
             당신은 전문 소프트웨어 엔지니어이며, 기술 지식을 문서화하는 임무를 맡았습니다. 제공된 대화 녹음본을 바탕으로 고품질의 기술 문서를 작성해 주세요.
 
             작성 시 다음 지침을 반드시 준수하세요:
@@ -25,4 +48,6 @@ def get_prompt():
             ### 3. 기타 주의 사항
             - 문서 내에 "녹음본"이라는 표현을 사용하지 마세요.
             - 본문에 인용 번호나 참고 번호를 삽입하지 마세요.
-            """
+            """;
+    }
+}
