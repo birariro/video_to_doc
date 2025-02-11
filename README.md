@@ -1,17 +1,12 @@
-# video to doc
 
-## use
+### github action env
+- OPENAI_API_KEY : api key
+- DOCKER_HUB_ID : docker hub id 
+- DOCKER_HUB_TOKEN : docker hub access token
+- DOCKER_HUB_REPOSITORY : docker hub this project repository name
 
-### env value
-```
-export OPEN_AI_TOKEN=<your api key>
-```
+- SERVER_HOST : deploy server host name or ip
+- SERVER_PORT : deploy server port
+- SERVER_USERNAME : deploy server login id
+- SERVER_PASSWORD : deploy server login password
 
-### local run
-```
-python3 -m venv path/to/venv
-source path/to/venv/bin/activate
-pip install -r requirements.txt
-
-streamlit run index.py
-```
