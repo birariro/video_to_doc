@@ -27,7 +27,7 @@ class YoutubeTranscript implements VideoTranscriptParser {
             if(ObjectUtils.isEmpty(content) || content.length() < 100){
                 throw new IllegalStateException("empty transcript");
             }
-            log.info("video id: {}, TranscriptContent length: ", content.length());
+            log.info("video id: {}, TranscriptContent length: {}", videoId, content.length());
             return content;
         }catch (Exception e){
              throw new IllegalStateException(e);

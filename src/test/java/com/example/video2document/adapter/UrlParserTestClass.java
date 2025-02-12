@@ -3,7 +3,7 @@ package com.example.video2document.adapter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class UrlParserTest {
+class UrlParserTestClass {
 
     @Test
     void parsingTest(){

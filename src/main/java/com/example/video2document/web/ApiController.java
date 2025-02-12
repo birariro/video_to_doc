@@ -21,10 +21,6 @@ public class ApiController {
     private final DocumentGenerator documentGenerator;
     private final UrlParser urlParser;
 
-    record VideoRequest(String url){
-
-    }
-
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/api/youtube/document")
     public String youtubeDocument(@RequestBody VideoRequest request) {

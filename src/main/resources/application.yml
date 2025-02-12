@@ -1,6 +1,9 @@
 spring:
   application:
     name: youtube2document
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
